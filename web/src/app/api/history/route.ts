@@ -250,9 +250,9 @@ export async function GET(request: NextRequest) {
       bridgeBySource.set(bridge.source_payment_tx_hash, bridge);
     }
 
-    const items = paymentRows.rows.map((payment) => {
+    const items = paymentRows.rows.map((payment: PaymentRow) => {
       const bridge = bridgeBySource.get(payment.tx_hash);
-      const schedule = scheduleRows.rows.find((item) => item.schedule_id === payment.schedule_id);
+      const schedule = scheduleRows.rows.find((item: ScheduleRow) => item.schedule_id === payment.schedule_id);
       const onChain = onChainByScheduleId.get(payment.schedule_id) ?? null;
       const destinationRecipient = schedule?.destination_recipient ?? bridge?.destination_recipient ?? null;
 
@@ -293,10 +293,10 @@ export async function GET(request: NextRequest) {
       schedules: scheduleIdsText.length,
       payments: paymentRows.rows.length,
       bridges: bridgeRows.rows.length,
-      successes: paymentRows.rows.filter((row) => row.status === "success").length,
+      successes: paymentRows.rows.filter((row: PaymentRow) => row.status === "success").length,
       failures:
-        paymentRows.rows.filter((row) => row.status === "failed").length +
-        bridgeRows.rows.filter((row) => row.status === "failed").length,
+        paymentRows.rows.filter((row: PaymentRow) => row.status === "failed").length +
+        bridgeRows.rows.filter((row: BridgeRow) => row.status === "failed").length,
     };
 
     return NextResponse.json({

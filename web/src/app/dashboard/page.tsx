@@ -69,7 +69,7 @@ export default async function DashboardPage() {
     ? await (async () => {
         const nextScheduleId = (await publicClient.readContract({
           abi: recurringPaymentAbi,
-          address: recurringPaymentAddress,
+          address: recurringPaymentAddress as `0x${string}`,
           functionName: "nextScheduleId",
         })) as bigint;
 
@@ -83,7 +83,7 @@ export default async function DashboardPage() {
             try {
               return (await publicClient.readContract({
                 abi: recurringPaymentAbi,
-                address: recurringPaymentAddress,
+                address: recurringPaymentAddress as `0x${string}`,
                 functionName: "getSchedule",
                 args: [scheduleId],
               })) as OnChainSchedule;
@@ -199,19 +199,19 @@ export default async function DashboardPage() {
     },
   ];
 
-  const chartData: ActivityPoint[] = activityResult.rows.map((row) => ({
+  const chartData: ActivityPoint[] = activityResult.rows.map((row: { week_start: Date; paid_raw: string | null }) => ({
     week: format(row.week_start, "MMM d"),
     paid: Number(formatUsdc(row.paid_raw ?? "0")),
   }));
 
-  const upcomingPayments: UpcomingPayment[] = upcomingResult.rows.map((row) => ({
+  const upcomingPayments: UpcomingPayment[] = upcomingResult.rows.map((row: { schedule_id: string; recipient: string; amount_per_payment: string; next_execution: Date }) => ({
     scheduleId: row.schedule_id,
     recipient: row.recipient,
     amount: formatUsdc(row.amount_per_payment),
     dueLabel: formatDistanceToNow(new Date(row.next_execution), { addSuffix: true }),
   }));
 
-  const recentActivity: RecentActivity[] = recentResult.rows.map((row) => ({
+  const recentActivity: RecentActivity[] = recentResult.rows.map((row: { schedule_id: string; tx_hash: string; amount: string; status: string; executed_at: Date }) => ({
     scheduleId: row.schedule_id,
     txHash: row.tx_hash,
     amount: formatUsdc(row.amount),
