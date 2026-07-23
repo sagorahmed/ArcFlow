@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
 
     const scheduleIds = (await publicClient.readContract({
       abi: recurringPaymentAbi,
-      address: recurringPaymentAddress,
+      address: recurringPaymentAddress as `0x${string}`,
       functionName: "getSchedulesByUser",
       args: [parsed.data.address as `0x${string}`],
     })) as bigint[];
@@ -184,7 +184,7 @@ export async function GET(request: NextRequest) {
         try {
           const schedule = (await publicClient.readContract({
             abi: recurringAbi,
-            address: recurringPaymentAddress,
+            address: recurringPaymentAddress as `0x${string}`,
             functionName: "getSchedule",
             args: [BigInt(scheduleId)],
           })) as OnChainSchedule;
